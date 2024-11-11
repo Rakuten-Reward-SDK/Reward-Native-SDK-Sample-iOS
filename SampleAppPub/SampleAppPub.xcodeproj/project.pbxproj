@@ -6,6 +6,13 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		8F1EE6092CE19F5D00054AD2 /* RakutenOneAuthClaims in Frameworks */ = {isa = PBXBuildFile; productRef = 8F1EE6082CE19F5D00054AD2 /* RakutenOneAuthClaims */; };
+		8F1EE60B2CE19F5D00054AD2 /* RakutenOneAuthCore in Frameworks */ = {isa = PBXBuildFile; productRef = 8F1EE60A2CE19F5D00054AD2 /* RakutenOneAuthCore */; };
+		8F1EE60D2CE19F5D00054AD2 /* RakutenOneAuthDeviceCheckAssertions in Frameworks */ = {isa = PBXBuildFile; productRef = 8F1EE60C2CE19F5D00054AD2 /* RakutenOneAuthDeviceCheckAssertions */; };
+		8F1EE6112CE1A18A00054AD2 /* RakutenRewardNativeSDK in Frameworks */ = {isa = PBXBuildFile; productRef = 8F1EE6102CE1A18A00054AD2 /* RakutenRewardNativeSDK */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		8FBCF6E62CDA025F004B720D /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -29,9 +36,22 @@
 		8FBCF6EF2CDA025F004B720D /* SampleAppPubUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SampleAppPubUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		8F1EE60E2CE1A00800054AD2 /* Exceptions for "SampleAppPub" folder in "SampleAppPub" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				SampleAppPubApp.swift,
+			);
+			target = 8FBCF6D42CDA025D004B720D /* SampleAppPub */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		8FBCF6D72CDA025D004B720D /* SampleAppPub */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				8F1EE60E2CE1A00800054AD2 /* Exceptions for "SampleAppPub" folder in "SampleAppPub" target */,
+			);
 			path = SampleAppPub;
 			sourceTree = "<group>";
 		};
@@ -52,6 +72,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8F1EE60D2CE19F5D00054AD2 /* RakutenOneAuthDeviceCheckAssertions in Frameworks */,
+				8F1EE6092CE19F5D00054AD2 /* RakutenOneAuthClaims in Frameworks */,
+				8F1EE6112CE1A18A00054AD2 /* RakutenRewardNativeSDK in Frameworks */,
+				8F1EE60B2CE19F5D00054AD2 /* RakutenOneAuthCore in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -112,6 +136,10 @@
 			);
 			name = SampleAppPub;
 			packageProductDependencies = (
+				8F1EE6082CE19F5D00054AD2 /* RakutenOneAuthClaims */,
+				8F1EE60A2CE19F5D00054AD2 /* RakutenOneAuthCore */,
+				8F1EE60C2CE19F5D00054AD2 /* RakutenOneAuthDeviceCheckAssertions */,
+				8F1EE6102CE1A18A00054AD2 /* RakutenRewardNativeSDK */,
 			);
 			productName = SampleAppPub;
 			productReference = 8FBCF6D52CDA025D004B720D /* SampleAppPub.app */;
@@ -195,6 +223,10 @@
 			);
 			mainGroup = 8FBCF6CC2CDA025D004B720D;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				8F1EE6072CE19F5D00054AD2 /* XCRemoteSwiftPackageReference "id-sdk-ios" */,
+				8F1EE60F2CE1A18A00054AD2 /* XCRemoteSwiftPackageReference "Rakuten-Reward-Native-iOS-SPM" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 8FBCF6D62CDA025D004B720D /* Products */;
 			projectDirPath = "";
@@ -558,6 +590,48 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		8F1EE6072CE19F5D00054AD2 /* XCRemoteSwiftPackageReference "id-sdk-ios" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://gitpub.rakuten-it.com/scm/rtoken/id-sdk-ios.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 4.0.0;
+			};
+		};
+		8F1EE60F2CE1A18A00054AD2 /* XCRemoteSwiftPackageReference "Rakuten-Reward-Native-iOS-SPM" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/rakuten-ads/Rakuten-Reward-Native-iOS-SPM";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 8.0.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		8F1EE6082CE19F5D00054AD2 /* RakutenOneAuthClaims */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 8F1EE6072CE19F5D00054AD2 /* XCRemoteSwiftPackageReference "id-sdk-ios" */;
+			productName = RakutenOneAuthClaims;
+		};
+		8F1EE60A2CE19F5D00054AD2 /* RakutenOneAuthCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 8F1EE6072CE19F5D00054AD2 /* XCRemoteSwiftPackageReference "id-sdk-ios" */;
+			productName = RakutenOneAuthCore;
+		};
+		8F1EE60C2CE19F5D00054AD2 /* RakutenOneAuthDeviceCheckAssertions */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 8F1EE6072CE19F5D00054AD2 /* XCRemoteSwiftPackageReference "id-sdk-ios" */;
+			productName = RakutenOneAuthDeviceCheckAssertions;
+		};
+		8F1EE6102CE1A18A00054AD2 /* RakutenRewardNativeSDK */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 8F1EE60F2CE1A18A00054AD2 /* XCRemoteSwiftPackageReference "Rakuten-Reward-Native-iOS-SPM" */;
+			productName = RakutenRewardNativeSDK;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 8FBCF6CD2CDA025D004B720D /* Project object */;
 }
