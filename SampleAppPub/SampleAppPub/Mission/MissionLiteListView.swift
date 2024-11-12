@@ -11,59 +11,72 @@ import RakutenRewardNativeSDK
 struct MissionLiteListView: View {
     
     @Binding var missions: [MissionLite]
-    @State private var showAlert = false
     @State private var currentSelectedActionCode = ""
-        
+    
+    @State private var showOptionsAlert = false
+    
+    @State private var showAlert = false
+    @State private var alertTitle = ""
+    @State private var alertMessage = ""
+    
     var body: some View {
         VStack {
             Text("Mission List")
+                .alert(isPresented: $showOptionsAlert) {
+                    Alert(
+                        title: Text("Options"),
+                        message: Text(""),
+                        primaryButton: .default(Text("Log Action"), action: {
+                            logAction(actionCode: currentSelectedActionCode)
+                        }),
+                        secondaryButton: .default(Text("Get Mission Details"), action: {
+                            getMissionDetails(actionCode: currentSelectedActionCode)
+                        })
+                    )
+                }
             List(Array(missions.enumerated()), id: \.0) { index, mission in
                 Button(action: {
                     currentSelectedActionCode = mission.actionCode
-                    showAlert = true
+                    showOptionsAlert = true
                 }) {
                     Text(mission.name)
                 }
             }
             .alert(isPresented: $showAlert) {
-                Alert(
-                    title: Text("Options"),
-                    message: Text(""),
-                    primaryButton: .default(Text("Log Action"), action: {
-                        logAction(actionCode: currentSelectedActionCode)
-                    }),
-                    secondaryButton: .default(Text("Get Mission Details"), action: {
-                        getMissionDetails(actionCode: currentSelectedActionCode)
-                    })
-                )
+                Alert(title: Text(alertTitle), message: Text(alertMessage))
             }
         }
         .padding()
     }
     
     func logAction(actionCode: String) {
+        alertTitle = ""
+        alertMessage = ""
+        
         RakutenReward.shared.logAction(actionCode: actionCode) { result in
             switch result {
             case .success():
-                print("Log action succcessful")
+                alertTitle = "Log action successful"
             case .failure(let error):
-                print("Log action failed")
+                alertTitle = "Log action failed. Error: \(error.localizedDescription)"
             }
+            showAlert = true
         }
     }
     
     func getMissionDetails(actionCode: String) {
+        alertTitle = ""
+        alertMessage = ""
+        
         RakutenReward.shared.getMissionDetails(actionCode: actionCode) { result in
             switch result {
             case .success(let missionDetails):
-                print("Derickdebug mission details: \(missionDetails)")
+                alertTitle = "Get mission details successful"
+                alertMessage = "\(missionDetails)"
             case .failure(let error):
-                print("Derickdebug error: \(error.localizedDescription)")
+                alertTitle = "Get mission details failed. Error: \(error.localizedDescription)"
             }
+            showAlert = true
         }
     }
 }
-
-//#Preview {
-//    MissionLiteListView(missions: [])
-//}

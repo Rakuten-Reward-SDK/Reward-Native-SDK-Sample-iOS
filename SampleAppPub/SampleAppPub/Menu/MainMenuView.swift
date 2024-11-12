@@ -15,8 +15,6 @@ struct Menu: Identifiable {
 
 struct MainMenuView: View {
     
-//    let appcode = "anAuY28ucmFrdXRlbi5yZXdhcmQuaW9zLXNURkM4enBWRnI4eWxZekhHOW1QY1pLZDJTZEZiM1k5"
-    
     let menus = [
         Menu(name: "Third Party Login"),
         Menu(name: "RID Login"),
@@ -24,12 +22,15 @@ struct MainMenuView: View {
         Menu(name: "Logout"),
         Menu(name: "Open SDK Portal"),
         Menu(name: "Open SPS Portal"),
-        Menu(name: "Mission List")
+        Menu(name: "Mission List"),
+        Menu(name: "JS extension test page")
     ]
     
     @State private var isThirdPartyLoginViewPresented = false
     @State private var isIdSdkLoginViewPresented = false
     @State private var isMissionListPresented = false
+    @State private var isUserSdkLoginViewPresented = false
+    @State private var isJsExtensionTestPagePresented = false
     
     @State private var sdkStatusText = RakutenReward.shared.status.description
     
@@ -38,7 +39,7 @@ struct MainMenuView: View {
     
     var body: some View {
         VStack {
-            Text("SDK status: \(sdkStatusText)")
+            Text("SDK Version: \(RakutenReward.shared.getVersion())\nSDK status: \(sdkStatusText)")
             List(Array(menus.enumerated()), id: \.element.id) { index, menu in
                 Button(action: {
                     switch index {
@@ -46,6 +47,8 @@ struct MainMenuView: View {
                         isThirdPartyLoginViewPresented = true
                     case 1:
                         isIdSdkLoginViewPresented = true
+                    case 2:
+                        isUserSdkLoginViewPresented = true
                     case 3:
                         RakutenReward.shared.logout {
                             sdkStatusText = RakutenReward.shared.status.description
@@ -75,9 +78,11 @@ struct MainMenuView: View {
                                 self.missions = missions
                                 isMissionListPresented = true
                             case .failure(let error):
-                                print("")
+                                print("Get mission lite list failed. Error: \(error.localizedDescription)")
                             }
                         }
+                    case 7:
+                        isJsExtensionTestPagePresented = true
                     default:
                         break
                     }
@@ -97,8 +102,14 @@ struct MainMenuView: View {
                 sdkStatusText = RakutenReward.shared.status.description
             }
         }
+        .sheet(isPresented: $isUserSdkLoginViewPresented) {
+            UserSdkLoginView()
+        }
         .sheet(isPresented: $isMissionListPresented) {
             MissionLiteListView(missions: $missions)
+        }
+        .sheet(isPresented: $isJsExtensionTestPagePresented) {
+            JSExtensionVCView()
         }
         .padding()
     }

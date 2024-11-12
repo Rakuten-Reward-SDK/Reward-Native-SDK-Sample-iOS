@@ -10,14 +10,15 @@ import RakutenRewardNativeSDK
 import RakutenOneAuthClaims
 import RakutenOneAuthCore
 import RakutenOneAuthDeviceCheckAssertions
-import RakutenOneAuthRAE
 import SwiftyJSON
 
+import ScreenSDKCore // For SPS
+
 class IDSDKLogin {
-    let kClientID = "reward_sdk" // need remove
-    let kIssuer = "https://login.account.rakuten.com"
-    let kExTokenAudience = "https://prod.api-catalogue.gateway-api.global.rakuten.com"
-    let kExTokenScopes: Set = ["mission-sdk"]
+    let kClientID = "" // TODO: set value here
+    let kIssuer = "" // TODO: set value here
+    let kExTokenAudience = "" // TODO: set value here
+    let kExTokenScopes: Set = [""] // TODO: set value here
     
     var gracePeriod: TimeInterval = 0
     var userPresenceCheckDisabled: Bool = false
@@ -34,11 +35,7 @@ class IDSDKLogin {
     var receiveAccessTokenHandler: ((String) -> Void)?
     var didUpdateinformationText: ((String) -> Void)?
     
-    var session: Session? {
-        didSet {
-            //updateUI()
-        }
-    }
+    var session: Session?
     
     init() {
         reset()
@@ -51,9 +48,26 @@ class IDSDKLogin {
         )
         
         updateDefault()
-//        updateUI()
         prepareClient()
-//        initSps()
+        initSps()
+    }
+    
+    // MARK: - SPS
+    
+    func initSps() {
+        let tokenProviderFunction = getTokenProviderFunction()
+        
+        // Init SPS
+        RakutenMissionSps.shared.initSps(
+            platform: AppConstant.spsPlatform,
+            sdkTokenProvider: tokenProviderFunction
+        )
+    }
+    
+    func getTokenProviderFunction() -> () -> TokenProvider {
+        return {
+            return TokenProvider.shared
+        }
     }
     
     // MARK: - Setup default settings
@@ -64,11 +78,13 @@ class IDSDKLogin {
             purgeIDSDKKeychainItems()
             setupDefaults()
             DispatchQueue.main.async {
+                /*
                 let alert = UIAlertController(title: "Purge Key Chain Items", message: "Done.", preferredStyle: .alert)
                 alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
-                //self.present(alert, animated: true)
+                self.present(alert, animated: true)
+                 */
                 self.session = nil
-                //TokenProvider.shared.session = nil
+                TokenProvider.shared.session = nil // SPS
             }
         }
     }
@@ -169,11 +185,11 @@ class IDSDKLogin {
                     self.session = session
                     self.updateInfoText("Session acquired!")
                     self.exchangeTokenRequest()
-                    //self.sdkExchangeTokenRequest()
+                    // self.sdkExchangeTokenRequest()
                     if let username = session.idToken.name {
                         self.updateInfoText("Session acquired! Welcome, username -> \(username)")
                     }
-                    //self.updateUI()
+                    // self.updateUI()
                 case let .failure(error):
                     switch error {
                     case is UserPresenceRequiredError:
@@ -233,14 +249,13 @@ class IDSDKLogin {
                 client.session(request: requestBuilder.build(),
                                mediationOptions: mediationOptionsBuilder.build()) { result in
                     if case let .success(session) = result {
-                        //TokenProvider.shared.session = session
+                        TokenProvider.shared.session = session // SPS
                         self.session = session
                         self.updateInfoText("Session loaded!")
                         self.exchangeTokenRequest()
                         if let userName = session.idToken.name {
                             self.updateInfoText("Welcome username -> \(userName)")
                         }
-                        //self.updateUI()
                     } else if case let .failure(error) = result {
                         self.updateInfoText("Session error: \(error.localizedDescription)")
                     }
@@ -251,7 +266,7 @@ class IDSDKLogin {
 
     func logout(session: Session) {
         session.logout { result in
-            //TokenProvider.shared.session = nil
+            TokenProvider.shared.session = nil // SPS
             self.session = nil
             self.updateInfoText("")
             if case let .failure(error) = result {
@@ -260,7 +275,6 @@ class IDSDKLogin {
             }
 
             self.updateInfoText("logout sucessful")
-            //self.updateUI()
         }
     }
 
@@ -314,7 +328,7 @@ class IDSDKLogin {
     }
 
     func getAccessTokenFromRPG(exchangeToken:String, completion: @escaping (_ result: String?) -> ()) {
-        let url = URL(string: "https://gateway-api.global.rakuten.com/RWDSDK/rpg-api/access_token")!
+        let url = URL(string: "")! // TODO: set value here
         var request = URLRequest(url: url)
         request.setValue(exchangeToken, forHTTPHeaderField: "Authorization")
         request.httpMethod = "GET"
@@ -346,11 +360,14 @@ class IDSDKLogin {
 struct IDSDKLoginView: View {
     
     var onDismiss: () -> Void
-    let appcode = "anAuY28ucmFrdXRlbi5yZXdhcmQuaW9zLXNURkM4enBWRnI4eWxZekhHOW1QY1pLZDJTZEZiM1k5"
     
     var idsdkLogin = IDSDKLogin()
     @State private var accessToken = ""
     @State private var informationText = ""
+    
+    @State private var showAlert = false
+    @State private var alertTitle = ""
+    @State private var alertMessage = ""
     
     var body: some View {
         VStack {
@@ -376,21 +393,33 @@ struct IDSDKLoginView: View {
             idsdkLogin.didUpdateinformationText = { informationText in
                 self.informationText = informationText
             }
+            
+            // Handle user consent
+            UserConsent.handleUserConsentFromSdkStatus()
         }
         .onDisappear {
             onDismiss()
+        }
+        .alert(isPresented: $showAlert) {
+            Alert(title: Text(alertTitle), message: Text(alertMessage))
         }
     }
     
     // MARK: - Initialize SDK ID SDK / RID
     
     func initSdkIdSdk() {
-        RakutenReward.shared.startSession(appCode: appcode, accessToken: accessToken, tokenType: .rid) { result in
+        alertTitle = ""
+        alertMessage = ""
+        
+        RakutenReward.shared.startSession(appCode: AppConstant.appcode, accessToken: accessToken, tokenType: .rid) { result in
             switch result {
             case .success(let sdkUser):
-                print("Start session IDSDK successful. User: \(sdkUser). You can now call SDK's APIs")
+                alertTitle = "Start session IDSDK successful."
+                alertMessage = "User: \(sdkUser). You can now call SDK's APIs"
+                showAlert = true
             case .failure(let rewardSdkSessionError):
-                print("Start session IDSDK failed. Error: \(rewardSdkSessionError.localizedDescription)")
+                alertTitle = "Start session IDSDK failed. Error: \(rewardSdkSessionError.localizedDescription)"
+                showAlert = true
             }
         }
     }

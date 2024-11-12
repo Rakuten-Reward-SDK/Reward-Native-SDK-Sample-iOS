@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>keychain-access-groups</key>
+	<array>
+		<string>$(AppIdentifierPrefix)jp.co.rakuten.RakutenRewardNativeSDK.SampleSwift</string>
+		<string>$(AppIdentifierPrefix)jp.co.rakuten.sdk.authentication.sso.japanId</string>
+		<string>$(AppIdentifierPrefix)jp.co.rakuten.ios.sdk.VerificationWorkflow</string>
+		<string>$(AppIdentifierPrefix)jp.co.rakuten.sdtd.sso</string>
+		<string>$(AppIdentifierPrefix)jp.co.rakuten.ios.sdk.deviceinformation</string>
+	</array>
+</dict>
+</plist>

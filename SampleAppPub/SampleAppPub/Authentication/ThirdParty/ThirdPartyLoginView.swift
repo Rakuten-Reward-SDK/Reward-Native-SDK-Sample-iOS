@@ -11,7 +11,10 @@ import RakutenRewardNativeSDK
 struct ThirdPartyLoginView: View {
     
     var onDismiss: () -> Void
-    let appcode = "anAuY28ucmFrdXRlbi5yZXdhcmQuaW9zLXNURkM4enBWRnI4eWxZekhHOW1QY1pLZDJTZEZiM1k5"
+    
+    @State private var showAlert = false
+    @State private var alertTitle = ""
+    @State private var alertMessage = ""
     
     var body: some View {
         VStack {
@@ -27,8 +30,15 @@ struct ThirdPartyLoginView: View {
             }
         }
         .padding()
+        .onAppear {
+            // Handle user consent
+            UserConsent.handleUserConsentFromSdkStatus()
+        }
         .onDisappear {
             onDismiss()
+        }
+        .alert(isPresented: $showAlert) {
+            Alert(title: Text(alertTitle), message: Text(alertMessage))
         }
     }
     
@@ -50,12 +60,18 @@ struct ThirdPartyLoginView: View {
     }
     
     func initSdkThirdPartyLogin() {
-        RakutenReward.shared.startSession(appCode: appcode) { result in
+        alertTitle = ""
+        alertMessage = ""
+        
+        RakutenReward.shared.startSession(appCode: AppConstant.appcode) { result in
             switch result {
             case .success(let sdkUser):
-                print("Start session third party successful. User: \(sdkUser). You can now call SDK's APIs")
+                alertTitle = "Start session third party successful."
+                alertMessage = " User: \(sdkUser). You can now call SDK's APIs"
+                showAlert = true
             case .failure(let rewardSdkSessionError):
-                print("Start session third party failed. Error: \(rewardSdkSessionError.localizedDescription)")
+                alertTitle = "Start session third party failed. Error: \(rewardSdkSessionError.localizedDescription)"
+                showAlert = true
             }
         }
     }
